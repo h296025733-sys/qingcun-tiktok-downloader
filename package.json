@@ -1,0 +1,65 @@
+{
+  "name": "qingcun-downloader",
+  "version": "1.1.1",
+  "description": "极简的 TikTok 批量无水印视频下载器",
+  "main": "src/main.js",
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "postinstall": "install-electron",
+    "build:icon": "electron scripts/build-icon.js",
+    "start": "electron .",
+    "test": "node --test tests/*.test.js",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/lib/link-parser.js && node --check src/lib/settings-store.js && node --check src/lib/proxy-resolver.js && node --check src/lib/download-manager.js && node --check src/renderer/app.js",
+    "dist": "electron-builder --win portable --x64",
+    "verify:engine": "node scripts/verify-engine.js"
+  },
+  "devDependencies": {
+    "electron": "44.0.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "com.qingcun.downloader",
+    "productName": "轻存",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "README.md",
+      "LICENSE"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/yt-dlp.exe",
+        "to": "bin/yt-dlp.exe"
+      },
+      {
+        "from": "vendor/yt-dlp-LICENSE.txt",
+        "to": "licenses/yt-dlp-LICENSE.txt"
+      },
+      {
+        "from": "vendor/THIRD_PARTY_LICENSES.txt",
+        "to": "licenses/yt-dlp-THIRD_PARTY_LICENSES.txt"
+      }
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "轻存-${version}-便携版.${ext}"
+    },
+    "portable": {
+      "artifactName": "轻存-${version}-便携版.${ext}"
+    }
+  }
+}

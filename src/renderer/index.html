@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>轻存</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="轻存">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img">
+            <path d="M12 4v10m0 0 4-4m-4 4-4-4M5 17.5v.5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-.5"/>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>轻存</strong>
+          <small>TikTok 无水印视频</small>
+        </span>
+      </div>
+      <button class="icon-button" id="settingsButton" type="button" aria-label="打开设置" title="设置">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z"/>
+          <path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1-2.3 2.3-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-3.2V19a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L6 15.5l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1h-.2V9.3h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L6 6.3 8.3 4l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h3.2v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 2.3 2.3-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v3.2H21a1.7 1.7 0 0 0-1.6 1Z"/>
+        </svg>
+      </button>
+    </header>
+
+    <main class="main-content">
+      <section class="notice notice-primary is-hidden" id="directoryNotice" aria-live="polite">
+        <span class="notice-icon" aria-hidden="true">↓</span>
+        <div>
+          <strong id="directoryNoticeTitle">先设置保存位置</strong>
+          <p id="directoryNoticeText">只需设置一次，之后视频会自动保存，不再询问。</p>
+        </div>
+        <button class="text-button" id="noticeChooseButton" type="button">选择文件夹</button>
+      </section>
+
+      <section class="notice notice-danger is-hidden" id="engineNotice" aria-live="assertive">
+        <span class="notice-icon" aria-hidden="true">!</span>
+        <div>
+          <strong>下载组件缺失</strong>
+          <p>请重新安装完整版本的轻存。</p>
+        </div>
+      </section>
+
+      <section class="input-card" id="dropZone">
+        <label for="urlInput">TikTok 视频链接</label>
+        <textarea id="urlInput" rows="3" spellcheck="false" placeholder="粘贴 TikTok 视频链接，一行一个；也可以直接粘贴整段分享文案"></textarea>
+        <div class="input-footer">
+          <span class="input-hint" id="inputHint">仅处理你提交的链接，重复项会自动跳过</span>
+          <button class="primary-button" id="addButton" type="button" disabled>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+            加入下载
+          </button>
+        </div>
+      </section>
+
+      <section class="queue-section" aria-labelledby="queueHeading">
+        <div class="section-header">
+          <div class="queue-heading-wrap">
+            <h1 id="queueHeading">下载任务</h1>
+            <span class="queue-stats" id="queueStats">暂无任务</span>
+          </div>
+          <button class="quiet-button is-hidden" id="clearButton" type="button">清除已完成</button>
+        </div>
+
+        <div class="task-list" id="taskList" aria-live="polite">
+          <div class="empty-state" id="emptyState">
+            <span class="empty-mark" aria-hidden="true">↓</span>
+            <strong>粘贴 TikTok 链接即可下载</strong>
+            <p>下载过程中可以继续加入新链接</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <div class="settings-layer is-hidden" id="settingsLayer" aria-hidden="true">
+    <button class="settings-backdrop" id="settingsBackdrop" type="button" aria-label="关闭设置"></button>
+    <aside class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-header">
+        <h2 id="settingsTitle">设置</h2>
+        <button class="icon-button" id="closeSettingsButton" type="button" aria-label="关闭设置">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div class="settings-body">
+        <label>保存位置</label>
+        <div class="path-box" id="settingsPath">尚未设置</div>
+        <p>设置一次后，视频会自动保存到这里。</p>
+        <button class="primary-button full-button" id="chooseDirectoryButton" type="button">选择文件夹</button>
+        <button class="quiet-button full-button" id="openDirectoryButton" type="button" disabled>打开保存文件夹</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+
+  <template id="taskTemplate">
+    <article class="task-row">
+      <div class="task-body">
+        <div class="task-topline">
+          <strong class="task-title"></strong>
+          <span class="task-status"></span>
+        </div>
+        <div class="progress-track" aria-hidden="true"><span class="progress-fill"></span></div>
+        <div class="task-meta"></div>
+      </div>
+      <button class="task-action" type="button"></button>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
